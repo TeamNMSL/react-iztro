@@ -1,28 +1,25 @@
-import { IFunctionalHoroscope } from "iztro/lib/astro/FunctionalHoroscope";
-import { IFunctionalPalace } from "iztro/lib/astro/FunctionalPalace";
-import { HoroscopeItem, Scope } from "iztro/lib/data/types";
-import { HeavenlyStemKey } from "iztro/lib/i18n";
+// src/Izpalace/Izpalace.type.ts
+import { Palace } from "iztro/lib/data/Palace";
+import { Horoscope } from "iztro/lib/data/Horoscope";
+import { HeavenlyStemKey, Scope } from "iztro/lib/i18n";
 
-export type IzpalaceProps = {
+export interface IzpalaceProps extends Palace {
   index: number;
   taichiPalace?: string;
   focusedIndex?: number;
-  horoscope?: IFunctionalHoroscope;
+  onFocused?: (index: number | undefined) => void;
+  horoscope?: Horoscope;
+  activeHeavenlyStem?: HeavenlyStemKey;
+  toggleActiveHeavenlyStem?: (stem: HeavenlyStemKey) => void;
+  hoverHeavenlyStem?: HeavenlyStemKey;
+  setHoverHeavenlyStem?: (stem: HeavenlyStemKey | undefined) => void;
   showDecadalScope?: boolean;
   showYearlyScope?: boolean;
   showMonthlyScope?: boolean;
   showDailyScope?: boolean;
   showHourlyScope?: boolean;
-  activeHeavenlyStem?: HeavenlyStemKey;
-  hoverHeavenlyStem?: HeavenlyStemKey;
-  setHoverHeavenlyStem?: (heavenlyStem?: HeavenlyStemKey) => void;
-  toggleActiveHeavenlyStem?: (heavenlyStem: HeavenlyStemKey) => void;
   toggleScope?: (scope: Scope) => void;
-  onFocused?: (index?: number) => void;
   toggleTaichiPoint?: (index: number) => void;
-} & IFunctionalPalace;
-
-export type HoroscopeForPalace = {
-  scope: Scope;
-  show: boolean;
-} & Partial<HoroscopeItem>;
+  // 新增解析回调函数类型
+  onShowAnalysis?: (title: string, e: React.MouseEvent) => void;
+}

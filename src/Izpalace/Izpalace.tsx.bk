@@ -1,48 +1,11 @@
-// src/Izpalace/Izpalace.tsx
 import React, { useMemo } from "react";
-import classNames from "classnames";
-import { Izstar } from "../Izstar/Izstar";
-import { fixIndex } from "iztro/lib/utils";
-import { kot, t } from "iztro/lib/i18n";
 import { HoroscopeForPalace, IzpalaceProps } from "./Izpalace.type";
-import { Scope } from "iztro/lib/data/types";
+import classNames from "classnames";
 import "./Izpalace.css";
-
-export interface IzpalaceProps {
-  index: number;
-  taichiPalace?: string;
-  focusedIndex?: number;
-  onFocused?: (index: number | undefined) => void;
-  horoscope?: any;
-  activeHeavenlyStem?: HeavenlyStemKey;
-  toggleActiveHeavenlyStem?: (stem: HeavenlyStemKey) => void;
-  hoverHeavenlyStem?: HeavenlyStemKey;
-  setHoverHeavenlyStem?: (stem: HeavenlyStemKey | undefined) => void;
-  showDecadalScope?: boolean;
-  showYearlyScope?: boolean;
-  showMonthlyScope?: boolean;
-  showDailyScope?: boolean;
-  showHourlyScope?: boolean;
-  toggleScope?: (scope: Scope) => void;
-  toggleTaichiPoint?: (index: number) => void;
-  majorStars: any[];
-  minorStars: any[];
-  adjectiveStars: any[];
-  name: string;
-  isBodyPalace?: boolean;
-  heavenlyStem: string;
-  earthlyBranch: string;
-  changsheng12: string;
-  boshi12: string;
-  suiqian12: string;
-  jiangqian12: string;
-  ages: string[];
-  decadal: {
-    range: string[];
-  };
-  [key: string]: any;
-  onShowInterpretation: (term: string, x: number, y: number) => void;
-}
+import { Izstar } from "../Izstar";
+import { HeavenlyStemKey, PalaceKey, kot, t } from "iztro/lib/i18n";
+import { fixIndex } from "iztro/lib/utils";
+import { Scope } from "iztro/lib/data/types";
 
 export const Izpalace = ({
   index,
@@ -61,7 +24,6 @@ export const Izpalace = ({
   showHourlyScope = false,
   toggleScope,
   toggleTaichiPoint,
-  onShowInterpretation,
   ...palace
 }: IzpalaceProps) => {
   const horoscopeNames = useMemo<HoroscopeForPalace[]>(() => {
@@ -167,11 +129,6 @@ export const Izpalace = ({
     showHourlyScope,
   ]);
 
-  const handleClick = (e: React.MouseEvent, term: string) => {
-    e.stopPropagation();
-    onShowInterpretation(term, e.clientX, e.clientY);
-  };
-
   return (
     <div
       className={classNames("iztro-palace", {
@@ -188,7 +145,7 @@ export const Izpalace = ({
       onMouseLeave={() => onFocused?.(undefined)}
     >
       <div className={classNames("iztro-palace-major")}>
-        {palace.majorStars.map((star: any) => (
+        {palace.majorStars.map((star) => (
           <Izstar
             key={star.name}
             activeHeavenlyStem={activeHeavenlyStem}
@@ -198,13 +155,12 @@ export const Izpalace = ({
               "Heavenly"
             )}
             horoscopeMutagens={horoscopeMutagens}
-            onShowInterpretation={onShowInterpretation}
             {...star}
           />
         ))}
       </div>
       <div className={classNames("iztro-palace-minor")}>
-        {palace.minorStars.map((star: any) => (
+        {palace.minorStars.map((star) => (
           <Izstar
             key={star.name}
             activeHeavenlyStem={activeHeavenlyStem}
@@ -214,50 +170,33 @@ export const Izpalace = ({
               "Heavenly"
             )}
             horoscopeMutagens={horoscopeMutagens}
-            onShowInterpretation={onShowInterpretation}
             {...star}
           />
         ))}
       </div>
       <div className={classNames("iztro-palace-adj")}>
         <div>
-          {palace.adjectiveStars.slice(5).map((star: any) => (
-            <Izstar 
-              key={star.name} 
-              {...star} 
-              onShowInterpretation={onShowInterpretation}
-            />
+          {palace.adjectiveStars.slice(5).map((star) => (
+            <Izstar key={star.name} {...star} />
           ))}
         </div>
         <div>
-          {palace.adjectiveStars.slice(0, 5).map((star: any) => (
-            <Izstar 
-              key={star.name} 
-              {...star} 
-              onShowInterpretation={onShowInterpretation}
-            />
+          {palace.adjectiveStars.slice(0, 5).map((star) => (
+            <Izstar key={star.name} {...star} />
           ))}
         </div>
       </div>
       <div className={classNames("iztro-palace-horo-star")}>
         <div className={classNames("stars")}>
           {horoscope?.decadal?.stars &&
-            horoscope?.decadal?.stars[index].map((star: any) => (
-              <Izstar 
-                key={star.name} 
-                {...star} 
-                onShowInterpretation={onShowInterpretation}
-              />
+            horoscope?.decadal?.stars[index].map((star) => (
+              <Izstar key={star.name} {...star} />
             ))}
         </div>
         <div className={classNames("stars")}>
           {horoscope?.yearly?.stars &&
-            horoscope?.yearly?.stars[index].map((star: any) => (
-              <Izstar 
-                key={star.name} 
-                {...star} 
-                onShowInterpretation={onShowInterpretation}
-              />
+            horoscope?.yearly?.stars[index].map((star) => (
+              <Izstar key={star.name} {...star} />
             ))}
         </div>
       </div>
@@ -280,18 +219,12 @@ export const Izpalace = ({
       <div className={classNames("iztro-palace-footer")}>
         <div>
           <div className={classNames("iztro-palace-lft24")}>
-            <div onClick={(e) => handleClick(e, palace.changsheng12)}>
-              {palace.changsheng12}
-            </div>
-            <div onClick={(e) => handleClick(e, palace.boshi12)}>
-              {palace.boshi12}
-            </div>
+            <div>{palace.changsheng12}</div>
+            <div>{palace.boshi12}</div>
           </div>
           <div
             className={classNames("iztro-palace-name")}
-            onClick={(e) => {
-              toggleTaichiPoint?.(index);
-            }}
+            onClick={() => toggleTaichiPoint?.(index)}
           >
             <span className="iztro-palace-name-wrapper">
               {palace.name}
@@ -303,10 +236,7 @@ export const Izpalace = ({
               </span>
             </span>
             {palace.isBodyPalace && (
-              <span 
-                className={classNames("iztro-palace-name-body")}
-                onClick={(e) => handleClick(e, t("bodyPalace"))}
-              >
+              <span className={classNames("iztro-palace-name-body")}>
                 ·{t("bodyPalace")}
               </span>
             )}
@@ -314,57 +244,36 @@ export const Izpalace = ({
         </div>
         <div>
           <div className={classNames("iztro-palace-scope")}>
-            <div 
-              className={classNames("iztro-palace-scope-age")}
-              onClick={(e) => handleClick(e, palace.ages.join(" "))}
-            >
+            <div className={classNames("iztro-palace-scope-age")}>
               {palace.ages.slice(0, 7).join(" ")}
             </div>
-            <div 
-              className={classNames("iztro-palace-scope-decadal")}
-              onClick={(e) => handleClick(e, palace.decadal.range.join(" - "))}
-            >
+            <div className={classNames("iztro-palace-scope-decadal")}>
               {palace.decadal.range.join(" - ")}
             </div>
           </div>
           <div className={classNames("iztro-palace-dynamic-name")}>
             {showDecadalScope && (
-              <span 
-                className="iztro-palace-dynamic-name-decadal"
-                onClick={(e) => handleClick(e, horoscope?.decadal.palaceNames[index])}
-              >
+              <span className="iztro-palace-dynamic-name-decadal">
                 {horoscope?.decadal.palaceNames[index]}
               </span>
             )}
             {showYearlyScope && (
-              <span 
-                className="iztro-palace-dynamic-name-yearly"
-                onClick={(e) => handleClick(e, horoscope?.yearly.palaceNames[index])}
-              >
+              <span className="iztro-palace-dynamic-name-yearly">
                 {horoscope?.yearly.palaceNames[index]}
               </span>
             )}
             {showMonthlyScope && (
-              <span 
-                className="iztro-palace-dynamic-name-monthly"
-                onClick={(e) => handleClick(e, horoscope?.monthly.palaceNames[index])}
-              >
+              <span className="iztro-palace-dynamic-name-monthly">
                 {horoscope?.monthly.palaceNames[index]}
               </span>
             )}
             {showDailyScope && (
-              <span 
-                className="iztro-palace-dynamic-name-daily"
-                onClick={(e) => handleClick(e, horoscope?.daily.palaceNames[index])}
-              >
+              <span className="iztro-palace-dynamic-name-daily">
                 {horoscope?.daily.palaceNames[index]}
               </span>
             )}
             {showHourlyScope && (
-              <span 
-                className="iztro-palace-dynamic-name-hourly"
-                onClick={(e) => handleClick(e, horoscope?.hourly.palaceNames[index])}
-              >
+              <span className="iztro-palace-dynamic-name-hourly">
                 {horoscope?.hourly.palaceNames[index]}
               </span>
             )}
@@ -372,20 +281,12 @@ export const Izpalace = ({
         </div>
         <div>
           <div className={classNames("iztro-palace-rgt24")}>
-            <div onClick={(e) => handleClick(e, 
-              showYearlyScope
-                ? horoscope?.yearly.yearlyDecStar.suiqian12[index]
-                : palace.suiqian12
-            )}>
+            <div>
               {showYearlyScope
                 ? horoscope?.yearly.yearlyDecStar.suiqian12[index]
                 : palace.suiqian12}
             </div>
-            <div onClick={(e) => handleClick(e,
-              showYearlyScope
-                ? horoscope?.yearly.yearlyDecStar.jiangqian12[index]
-                : palace.jiangqian12
-            )}>
+            <div>
               {showYearlyScope
                 ? horoscope?.yearly.yearlyDecStar.jiangqian12[index]
                 : palace.jiangqian12}
@@ -398,12 +299,11 @@ export const Izpalace = ({
                 activeHeavenlyStem ===
                 kot<HeavenlyStemKey>(palace.heavenlyStem, "Heavenly"),
             })}
-            onClick={(e) => {
-              handleClick(e, palace.heavenlyStem + palace.earthlyBranch);
+            onClick={() =>
               toggleActiveHeavenlyStem?.(
                 kot<HeavenlyStemKey>(palace.heavenlyStem, "Heavenly")
-              );
-            }}
+              )
+            }
             onMouseEnter={() =>
               setHoverHeavenlyStem?.(
                 kot<HeavenlyStemKey>(palace.heavenlyStem, "Heavenly")
