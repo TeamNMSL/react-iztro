@@ -10,14 +10,16 @@
     "storybook": "storybook dev -p 6006",
     "clean": "rimraf lib/",
     "copy-files": "copyfiles -u 1 src/**/*.css lib/",
-    "build": "npm run clean && tsc && npm run copy-files",
+    "build": "npm run clean && tsc --skipLibCheck && npm run copy-files",
     "build:sb": "storybook build",
     "build-storybook": "storybook build",
     "prepare": "npm run build",
     "prepublishOnly": "npm run lint",
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d lib"
   },
   "files": [
     "lib/**/*"
@@ -40,7 +42,7 @@
     "url": "https://github.com/SylarLong/react-iztro/issues",
     "email": "sylarlong@gmail.com"
   },
-  "homepage": "https://docs.iztro.com",
+  "homepage": "https://TeamNMSL.github.io/react-iztro",
   "devDependencies": {
     "@babel/preset-env": "^7.22.15",
     "@babel/preset-react": "^7.22.15",
@@ -57,8 +59,10 @@
     "@types/react": "^18.2.21",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "@typescript-eslint/parser": "^6.7.0",
+    "chromatic": "^13.3.0",
     "copyfiles": "^2.4.1",
     "eslint": "^8.49.0",
+    "gh-pages": "^6.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rimraf": "^5.0.1",
