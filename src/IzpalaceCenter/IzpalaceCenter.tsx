@@ -92,7 +92,7 @@ export const IzpalaceCenter = ({
       prevDecadalDisabled: dt.setFullYear(dt.getFullYear() - 1),
     };
   }, [horoscopeDate]);
-
+  
   const onHoroscopeButtonClicked = (scope: Scope, value: number) => {
     if (!astrolabe?.solarDate) return true;
 
@@ -205,22 +205,11 @@ export const IzpalaceCenter = ({
           <span
             className="today"
             onClick={(e) => {
-              setHoroscopeDate?.(new Date());
-              const x = getAstrolabeParams();
-              if (x.birthday === "") return;
-
-              // 生成星盘数据
-              
-              const a = x.gender === "female"
-                ? astro.bySolar(x.birthday, x.birthTime, "female", true, 'zh-CN')
-                : astro.bySolar(x.birthday, x.birthTime, "male", true, 'zh-CN');
-              
+              if(!astrolabe) return
               const rst = {
-                horoscope: a.horoscope()
+                horoscope:astrolabe.horoscope(horoscopeDate)
               };
               e.stopPropagation();
-              //onShowInterpretation(JSON.stringify(rst), e.clientX, e.clientY);
-              //console.log(JSON.stringify(rst))
               navigator.clipboard.writeText("astrolabe.palaces是本命盘按顺序排列的宫位。daily.palaceNames是流日盘按顺序排列的宫位。假设i为0-11（闭区间）的一个整数，astrolabe.palaces[i]为X宫，daily.palaceNames[i]为Y宫,则流日盘的Y宫落在本命盘的X宫。大限流年流月流日流时盘同理。又假设j为0-11（闭区间）的一个整数，daily.palaceName[j]为Z宫，则流日盘的Z宫的星曜为daily.stars[j]这个列表里面的星曜，(daily.stars是一个list[list])。大限流年流月流日流时盘的星曜同理。对于四化。本命盘的X宫主星的四化在astrolabe.palaces[i].majorStars[列表索引].mutagen内（当然它可能为空，表示没有四化）。流日盘的四化在daily.mutagen这个数组里，设这个数组的内容依次为S1，S2，S3，S4，（这四个S代表四个星曜）则S1化禄，S2化权，S3化科，S4化忌。也就是说这个数组里的星，依次是化禄星 化权星 化科星 化忌星。astrolabe.palaces 和各个运限盘的 palaceNames 数组都已按照标准的紫微斗数宫位顺序排列完成，顺序已经包含了所有必要的顺行、逆行排列逻辑。现在你需要做的事情是先解析底下那个Json，一定要先看完再进行下一步，你不需要按照紫微斗数的规则进行排盘，你只需要读取json的内容并构建一个盘，然后根据这个盘来回答我接下来的问题。\n"+JSON.stringify(rst))
               alert("带AI提示词的星盘Json已复制到剪贴板")
             }}
@@ -230,22 +219,11 @@ export const IzpalaceCenter = ({
           <span
             className="today"
             onClick={(e) => {
-              setHoroscopeDate?.(new Date());
-              const x = getAstrolabeParams();
-              if (x.birthday === "") return;
-
-              // 生成星盘数据
-              
-              const a = x.gender === "female"
-                ? astro.bySolar(x.birthday, x.birthTime, "female", true, 'zh-CN')
-                : astro.bySolar(x.birthday, x.birthTime, "male", true, 'zh-CN');
-              
+              if(!astrolabe) return
               const rst = {
-                horoscope: a.horoscope()
+                horoscope:astrolabe.horoscope(horoscopeDate)
               };
               e.stopPropagation();
-              //onShowInterpretation(JSON.stringify(rst), e.clientX, e.clientY);
-              //console.log(JSON.stringify(rst))
               navigator.clipboard.writeText(JSON.stringify(rst))
               alert("已把星盘Json复制到剪贴板")
             }}
