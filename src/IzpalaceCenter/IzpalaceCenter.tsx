@@ -216,7 +216,6 @@ export const IzpalaceCenter = ({
                 : astro.bySolar(x.birthday, x.birthTime, "male", true, 'zh-CN');
               
               const rst = {
-                astrolabe: a,
                 horoscope: a.horoscope()
               };
               e.stopPropagation();
@@ -242,7 +241,6 @@ export const IzpalaceCenter = ({
                 : astro.bySolar(x.birthday, x.birthTime, "male", true, 'zh-CN');
               
               const rst = {
-                astrolabe: a,
                 horoscope: a.horoscope()
               };
               e.stopPropagation();
