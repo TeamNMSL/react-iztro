@@ -19,7 +19,8 @@
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d lib"
+    "deploy": "gh-pages -d lib",
+    "chromatic": "npx chromatic --project-token=chpt_901b38a2369ac07"
   },
   "files": [
     "lib/**/*"
