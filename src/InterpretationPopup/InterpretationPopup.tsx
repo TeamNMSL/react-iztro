@@ -18,15 +18,12 @@ export const InterpretationPopup: React.FC<InterpretationPopupProps> = ({
   position
 }) => {
   if (!visible) return null;
-
+  content = content.replace(/\n/g, "<br>");
+  
   return (
     <div className="interpretation-backdrop" onClick={onClose}>
       <div 
         className="interpretation-popup"
-        style={{ 
-          top: `${position.y}px`, 
-          left: `${position.x}px` 
-        }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="interpretation-header">
@@ -34,7 +31,7 @@ export const InterpretationPopup: React.FC<InterpretationPopupProps> = ({
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
         <div className="interpretation-content">
-          <p>{content}</p>
+           <div dangerouslySetInnerHTML={{ __html: content }} />
         </div>
       </div>
     </div>
