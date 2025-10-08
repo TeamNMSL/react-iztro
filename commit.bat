@@ -1,4 +1,4 @@
 start /wait npm run build-storybook
 git add .
-git commit -m "更新解释"
+git commit -m "update interpretation and update code"
 git push -f origin main

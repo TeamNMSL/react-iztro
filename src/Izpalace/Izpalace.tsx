@@ -260,6 +260,36 @@ export const Izpalace = ({
               />
             ))}
         </div>
+        <div className={classNames("stars")}>
+        {showMonthlyScope && (horoscope?.monthly?.stars &&
+            horoscope?.monthly?.stars[index].map((star: any) => (
+              <Izstar 
+                key={star.name} 
+                {...star} 
+                onShowInterpretation={onShowInterpretation}
+              />
+            )))}
+        </div>
+        <div className={classNames("stars")}>
+          {showDailyScope && (horoscope?.daily?.stars &&
+            horoscope?.daily?.stars[index].map((star: any) => (
+              <Izstar 
+                key={star.name} 
+                {...star} 
+                onShowInterpretation={onShowInterpretation}
+              />
+            )))}
+        </div>
+        <div className={classNames("stars")}>
+        {showHourlyScope && (horoscope?.hourly?.stars &&
+            horoscope?.hourly?.stars[index].map((star: any) => (
+              <Izstar 
+                key={star.name} 
+                {...star} 
+                onShowInterpretation={onShowInterpretation}
+              />
+            )))}
+        </div>
       </div>
       <div className={classNames("iztro-palace-fate")}>
         {horoscopeNames?.map((item) => (
