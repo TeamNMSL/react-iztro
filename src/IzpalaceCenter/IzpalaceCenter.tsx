@@ -336,7 +336,8 @@ export const IzpalaceCenter = ({
 
       // 运限信息
       lines.push("# 运限信息");
-      lines.push(`当前农历：${h.lunarDate || ""}  阳历：${h.solarDate || ""}  当前流时地支：${get(h, "hourly.earthlyBranch", "")}时`);
+      lines.push(`当前农历：${h.lunarDate || ""}`);
+      lines.push(`当前阳历：${h.solarDate || ""}`);
       lines.push("");
 
       addLimitsSection(lines, h.decadal, "大限 (decadal)");
