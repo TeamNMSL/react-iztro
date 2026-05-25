@@ -200,7 +200,7 @@ export const IzpalaceCenter = ({
             className="today"
             onClick={() => setHoroscopeDate?.(new Date())}
           >
-            今
+            今日
           </span>
           <span
             className="today"
@@ -226,7 +226,7 @@ export const IzpalaceCenter = ({
               alert("带AI提示词的星盘Json已复制到剪贴板")
             }}
           >
-            问
+            提问（Json）
           </span>
           <span
             className="today"
@@ -252,8 +252,205 @@ export const IzpalaceCenter = ({
               alert("已把星盘Json复制到剪贴板")
             }}
           >
-            导
+            导出
           </span>
+          <span
+  className="today"
+  onClick={(e) => {
+    if (!astrolabe) return;
+
+    const safeStringify = (obj: any) => {
+      const seen = new WeakSet();
+      return JSON.stringify(obj, (key, value) => {
+        if (typeof value === 'object' && value !== null) {
+          if (seen.has(value)) {
+            return '[Circular]';
+          }
+          seen.add(value);
+        }
+        return value;
+      }, 2);
+    };
+
+    const parseHoroscopeFull = (jsonString: string): string => {
+      const data = JSON.parse(jsonString);
+      const h = data.horoscope;
+      const a = h.astrolabe;
+      const palaces = a.palaces;
+
+      const buildMutagenMap = (mutagenList: string[] | undefined): Record<string, string> => {
+        if (!mutagenList || mutagenList.length !== 4) return {};
+        return {
+          [mutagenList[0]]: "禄",
+          [mutagenList[1]]: "权",
+          [mutagenList[2]]: "科",
+          [mutagenList[3]]: "忌",
+        };
+      };
+
+      const addLimitsSection = (lines: string[], limitDict: any, title: string) => {
+        if (!limitDict) return;
+        lines.push(`### ${title}`);
+        lines.push(`- 干支：${limitDict.heavenlyStem || ""}${limitDict.earthlyBranch || ""}`);
+        const mutagen = limitDict.mutagen || [];
+        lines.push(`- 四化(禄权科忌)：${mutagen[0] || ""}化禄,${mutagen[1] || ""}化权,${mutagen[2] || ""}化科,${mutagen[3] || ""}化忌`);
+        lines.push(`- 宫位顺序：${(limitDict.palaceNames || []).join(", ")}`);
+        lines.push("");
+      };
+
+      const get = (obj: any, path: string, def: any = "") => {
+        return path.split(".").reduce((o, k) => (o?.[k] !== undefined ? o[k] : def), obj);
+      };
+
+      const lines: string[] = [];
+
+      // 基本信息
+      lines.push("# 信息");
+      lines.push(`性别：${a.gender || ""}`);
+      lines.push(`年龄(虚岁)：${get(h, "age.nominalAge", "")}`);
+      lines.push(`阳历：${a.solarDate || ""} / ${h.solarDate || ""}(盘中当前)`);
+      lines.push(`农历：${a.lunarDate || ""} / ${h.lunarDate || ""}(盘中当前)`);
+      lines.push(`时辰：${a.time || ""}(${a.timeRange || ""})`);
+      lines.push(`五行局：${a.fiveElementsClass || ""}`);
+      lines.push(`四柱：${a.chineseDate || ""}`);
+      lines.push(`生肖：${a.zodiac || ""}`);
+      lines.push(`星座：${a.sign || ""}`);
+      lines.push(`命主：${a.soul || ""}(地支${a.earthlyBranchOfSoulPalace || ""})`);
+      lines.push(`身主：${a.body || ""}(地支${a.earthlyBranchOfBodyPalace || ""})`);
+
+      const lifePalace = palaces.find((p: any) => p.name === "命宫");
+      lines.push(`命宫：${lifePalace?.earthlyBranch || ""}`);
+      const bodyPalace = palaces.find((p: any) => p.isBodyPalace === true);
+      lines.push(`身宫：${bodyPalace?.name || ""}`);
+
+      const raw = a.rawDates || {};
+      const rawLunar = raw.lunarDate || {};
+      const rawChinese = raw.chineseDate || {};
+      lines.push(`原始农历数字：${rawLunar.lunarYear || ""}年${rawLunar.lunarMonth || ""}月${rawLunar.lunarDay || ""}日 闰${rawLunar.isLeap || false}`);
+      const yearlyCn = rawChinese.yearly || ["", ""];
+      const monthlyCn = rawChinese.monthly || ["", ""];
+      const dailyCn = rawChinese.daily || ["", ""];
+      const hourlyCn = rawChinese.hourly || ["", ""];
+      lines.push(`原始四柱干支：年${yearlyCn[0]}${yearlyCn[1]} 月${monthlyCn[0]}${monthlyCn[1]} 日${dailyCn[0]}${dailyCn[1]} 时${hourlyCn[0]}${hourlyCn[1]}`);
+      lines.push("");
+
+      // 运限信息
+      lines.push("# 运限信息");
+      lines.push(`当前农历：${h.lunarDate || ""}  阳历：${h.solarDate || ""}  当前流时地支：${get(h, "hourly.earthlyBranch", "")}时`);
+      lines.push("");
+
+      addLimitsSection(lines, h.decadal, "大限 (decadal)");
+      addLimitsSection(lines, h.age, "小限 (age)");
+      addLimitsSection(lines, h.yearly, "流年 (yearly)");
+
+      lines.push("#### 流年额外星曜(岁前十二星 / 将前十二星)");
+      const yds = h.yearly?.yearlyDecStar || {};
+      lines.push(`- 岁前十二星(顺序)：${(yds.suiqian12 || []).join(", ")}`);
+      lines.push(`- 将前十二星(顺序)：${(yds.jiangqian12 || []).join(", ")}`);
+      lines.push("");
+
+      addLimitsSection(lines, h.monthly, "流月 (monthly)");
+      addLimitsSection(lines, h.daily, "流日 (daily)");
+      addLimitsSection(lines, h.hourly, "流时 (hourly)");
+      lines.push("");
+
+      // 十二宫
+      lines.push("# 宫位");
+
+      const decadalMut = buildMutagenMap(h.decadal?.mutagen);
+      const ageMut = buildMutagenMap(h.age?.mutagen);
+      const yearlyMut = buildMutagenMap(h.yearly?.mutagen);
+      const monthlyMut = buildMutagenMap(h.monthly?.mutagen);
+      const dailyMut = buildMutagenMap(h.daily?.mutagen);
+      const hourlyMut = buildMutagenMap(h.hourly?.mutagen);
+
+      const decadalStars: any[][] = h.decadal?.stars || [];
+      const yearlyStars: any[][] = h.yearly?.stars || [];
+      const monthlyStars: any[][] = h.monthly?.stars || [];
+      const dailyStars: any[][] = h.daily?.stars || [];
+      const hourlyStars: any[][] = h.hourly?.stars || [];
+
+      // 提前获取各运限的 palaceNames 数组，避免重复访问
+      const decadalPalNames = h.decadal?.palaceNames || [];
+      const agePalNames = h.age?.palaceNames || [];
+      const yearlyPalNames = h.yearly?.palaceNames || [];
+      const monthlyPalNames = h.monthly?.palaceNames || [];
+      const dailyPalNames = h.daily?.palaceNames || [];
+      const hourlyPalNames = h.hourly?.palaceNames || [];
+
+      for (let idx = 0; idx < palaces.length; idx++) {
+        const palace = palaces[idx];
+        const title = palace.name.endsWith("宫") ? palace.name : palace.name + "宫";
+        lines.push(`## 本命盘：${title}`);
+
+        lines.push(`- 宫位干支：${palace.heavenlyStem || ""}${palace.earthlyBranch || ""}`);
+        lines.push(`- 身宫：${palace.isBodyPalace ? "是" : "否"}  原局命宫：${palace.isOriginalPalace ? "是" : "否"}`);
+        const decRange = palace.decadal?.range || [];
+        lines.push(`- 大限年龄范围：${decRange[0] || ""}-${decRange[1] || ""}岁 (大限干支${palace.decadal?.heavenlyStem || ""}${palace.decadal?.earthlyBranch || ""})`);
+        lines.push(`- 各小限年龄列表：${(palace.ages || []).join(", ")}`);
+
+        // 修正：直接通过数组索引访问，不再使用 get
+        lines.push(`- 大限落宫：${decadalPalNames[idx] || ""}`);
+        lines.push(`- 小限落宫：${agePalNames[idx] || ""}`);
+        lines.push(`- 流年落宫：${yearlyPalNames[idx] || ""}`);
+        lines.push(`- 流月落宫：${monthlyPalNames[idx] || ""}`);
+        lines.push(`- 流日落宫：${dailyPalNames[idx] || ""}`);
+        lines.push(`- 流时落宫：${hourlyPalNames[idx] || ""}`);
+
+        const majorStars = palace.majorStars || [];
+        if (majorStars.length) {
+          lines.push("主星：");
+          for (const ms of majorStars) {
+            const star = ms.name;
+            const brightness = ms.brightness || "";
+            const originMutagen = ms.mutagen || "";
+            lines.push(`  - ${star}(${brightness})；本命四化：${originMutagen || "无"}；四化(大限:${decadalMut[star] || ""} 小限:${ageMut[star] || ""} 流年:${yearlyMut[star] || ""} 流月:${monthlyMut[star] || ""} 流日:${dailyMut[star] || ""} 流时:${hourlyMut[star] || ""})`);
+          }
+        } else {
+          lines.push("主星：无");
+        }
+
+        lines.push(`辅星：${(palace.minorStars || []).map((s: any) => s.name).join(", ") || "无"}`);
+        lines.push(`杂曜：${(palace.adjectiveStars || []).map((s: any) => s.name).join(", ") || "无"}`);
+
+        // 安全获取各运限当前索引的星曜列表
+        const decFlowStars = decadalStars[idx] || [];
+        const yearFlowStars = yearlyStars[idx] || [];
+        const monthFlowStars = monthlyStars[idx] || [];
+        const dayFlowStars = dailyStars[idx] || [];
+        const hourFlowStars = hourlyStars[idx] || [];
+
+        lines.push("流曜：");
+        lines.push(`  - 大限：${decFlowStars.map((s: any) => s.name).join("、") || "无"}`);
+        lines.push(`  - 流年：${yearFlowStars.map((s: any) => s.name).join("、") || "无"}`);
+        lines.push(`  - 流月：${monthFlowStars.map((s: any) => s.name).join("、") || "无"}`);
+        lines.push(`  - 流日：${dayFlowStars.map((s: any) => s.name).join("、") || "无"}`);
+        lines.push(`  - 流时：${hourFlowStars.map((s: any) => s.name).join("、") || "无"}`);
+
+        lines.push(`十二长生：${palace.changsheng12 || ""}`);
+        lines.push(`十二博士：${palace.boshi12 || ""}`);
+        lines.push(`将前十二：${palace.jiangqian12 || ""}`);
+        lines.push(`岁前十二：${palace.suiqian12 || ""}`);
+        lines.push("");
+      }
+
+      return lines.join("\n");
+    };
+
+    const rst = {
+      horoscope: astrolabe.horoscope(horoscopeDate, horoscopeHour),
+    };
+
+    const jsonString = safeStringify(rst).replace(/\n/g, "").replace(/ /g, "");
+    const markdownReport = parseHoroscopeFull(jsonString);
+
+    e.stopPropagation();
+    navigator.clipboard.writeText(markdownReport+"以上为命盘。请参照此盘回答用户的问题。其中本命盘板块下的落宫，表示的是运限盘宫位落于此处。重点提醒：如果要看运限盘的流曜，需要确认运限盘宫位落于本命盘的位置，并在那个位置去拿对应的流曜。用户提问：");
+    alert("星盘解析（Markdown格式）已复制到剪贴板");
+  }}
+>
+  提问
+</span>
         </div>
       </ul>
       <div className="horo-buttons">
