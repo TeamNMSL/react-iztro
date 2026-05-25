@@ -294,7 +294,7 @@ export const IzpalaceCenter = ({
         lines.push(`- 干支：${limitDict.heavenlyStem || ""}${limitDict.earthlyBranch || ""}`);
         const mutagen = limitDict.mutagen || [];
         lines.push(`- 四化(禄权科忌)：${mutagen[0] || ""}化禄,${mutagen[1] || ""}化权,${mutagen[2] || ""}化科,${mutagen[3] || ""}化忌`);
-        lines.push(`- 宫位顺序：${(limitDict.palaceNames || []).join(", ")}`);
+        //lines.push(`- 宫位顺序：${(limitDict.palaceNames || []).join(", ")}`);
         lines.push("");
       };
 
@@ -343,10 +343,10 @@ export const IzpalaceCenter = ({
       addLimitsSection(lines, h.age, "小限 (age)");
       addLimitsSection(lines, h.yearly, "流年 (yearly)");
 
-      lines.push("#### 流年额外星曜(岁前十二星 / 将前十二星)");
+      //lines.push("#### 流年额外星曜(岁前十二星 / 将前十二星)");
       const yds = h.yearly?.yearlyDecStar || {};
-      lines.push(`- 岁前十二星(顺序)：${(yds.suiqian12 || []).join(", ")}`);
-      lines.push(`- 将前十二星(顺序)：${(yds.jiangqian12 || []).join(", ")}`);
+      //lines.push(`- 岁前十二星(顺序)：${(yds.suiqian12 || []).join(", ")}`);
+      //lines.push(`- 将前十二星(顺序)：${(yds.jiangqian12 || []).join(", ")}`);
       lines.push("");
 
       addLimitsSection(lines, h.monthly, "流月 (monthly)");
@@ -390,12 +390,29 @@ export const IzpalaceCenter = ({
         lines.push(`- 各小限年龄列表：${(palace.ages || []).join(", ")}`);
 
         // 修正：直接通过数组索引访问，不再使用 get
-        lines.push(`- 大限落宫：${decadalPalNames[idx] || ""}`);
-        lines.push(`- 小限落宫：${agePalNames[idx] || ""}`);
-        lines.push(`- 流年落宫：${yearlyPalNames[idx] || ""}`);
-        lines.push(`- 流月落宫：${monthlyPalNames[idx] || ""}`);
-        lines.push(`- 流日落宫：${dailyPalNames[idx] || ""}`);
-        lines.push(`- 流时落宫：${hourlyPalNames[idx] || ""}`);
+       function ensureGong(name:string) {
+    if (!name) return null;
+    return name.endsWith('宫') ? name : name + '宫';
+}
+
+// 输出大限、小限、流年、流月、流日、流时的宫位映射
+const deca = ensureGong(decadalPalNames[idx]);
+if (deca) lines.push(`- 大限${deca}落于此`);
+
+const age = ensureGong(agePalNames[idx]);
+if (age) lines.push(`- 小限${age}落于此`);
+
+const yearly = ensureGong(yearlyPalNames[idx]);
+if (yearly) lines.push(`- 流年${yearly}落于此`);
+
+const monthly = ensureGong(monthlyPalNames[idx]);
+if (monthly) lines.push(`- 流月${monthly}落于此`);
+
+const daily = ensureGong(dailyPalNames[idx]);
+if (daily) lines.push(`- 流日${daily}落于此`);
+
+const hourly = ensureGong(hourlyPalNames[idx]);
+if (hourly) lines.push(`- 流时${hourly}落于此`);
 
         const majorStars = palace.majorStars || [];
         if (majorStars.length) {
@@ -404,7 +421,7 @@ export const IzpalaceCenter = ({
             const star = ms.name;
             const brightness = ms.brightness || "";
             const originMutagen = ms.mutagen || "";
-            lines.push(`  - ${star}(${brightness})；本命四化：${originMutagen || "无"}；四化(大限:${decadalMut[star] || ""} 小限:${ageMut[star] || ""} 流年:${yearlyMut[star] || ""} 流月:${monthlyMut[star] || ""} 流日:${dailyMut[star] || ""} 流时:${hourlyMut[star] || ""})`);
+            lines.push(`  - ${star}(${brightness})；本命四化：${originMutagen || "无"}；四化(大限:${decadalMut[star] || "无"}, 小限:${ageMut[star] || "无"}, 流年:${yearlyMut[star] || "无"}, 流月:${monthlyMut[star] || "无"}, 流日:${dailyMut[star] || "无"}, 流时:${hourlyMut[star] || "无"})`);
           }
         } else {
           lines.push("主星：无");
@@ -445,7 +462,7 @@ export const IzpalaceCenter = ({
     const markdownReport = parseHoroscopeFull(jsonString);
 
     e.stopPropagation();
-    navigator.clipboard.writeText(markdownReport+"以上为命盘。请参照此盘回答用户的问题。其中本命盘板块下的落宫，表示的是运限盘宫位落于此处。重点提醒：如果要看运限盘的流曜，需要确认运限盘宫位落于本命盘的位置，并在那个位置去拿对应的流曜。用户提问：");
+    navigator.clipboard.writeText(markdownReport+"以上为命盘。请参照此盘回答用户的问题，需要客观，无需考虑用户是否乐意听。用户提问：");
     alert("星盘解析（Markdown格式）已复制到剪贴板");
   }}
 >
