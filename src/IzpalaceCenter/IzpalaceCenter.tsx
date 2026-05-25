@@ -305,7 +305,7 @@ export const IzpalaceCenter = ({
       const lines: string[] = [];
 
       // 基本信息
-      lines.push("# 信息");
+      lines.push("# 出生信息");
       lines.push(`性别：${a.gender || ""}`);
       lines.push(`年龄(虚岁)：${get(h, "age.nominalAge", "")}`);
       lines.push(`阳历：${a.solarDate || ""} / ${h.solarDate || ""}(盘中当前)`);
