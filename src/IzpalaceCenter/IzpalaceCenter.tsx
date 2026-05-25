@@ -396,24 +396,6 @@ export const IzpalaceCenter = ({
     return name.endsWith('宫') ? name : name + '宫';
 }
 
-// 输出大限、小限、流年、流月、流日、流时的宫位映射
-const deca = ensureGong(decadalPalNames[idx]);
-if (deca) lines.push(`- 大限${deca}落于此`);
-
-const age = ensureGong(agePalNames[idx]);
-if (age) lines.push(`- 小限${age}落于此`);
-
-const yearly = ensureGong(yearlyPalNames[idx]);
-if (yearly) lines.push(`- 流年${yearly}落于此`);
-
-const monthly = ensureGong(monthlyPalNames[idx]);
-if (monthly) lines.push(`- 流月${monthly}落于此`);
-
-const daily = ensureGong(dailyPalNames[idx]);
-if (daily) lines.push(`- 流日${daily}落于此`);
-
-const hourly = ensureGong(hourlyPalNames[idx]);
-if (hourly) lines.push(`- 流时${hourly}落于此`);
 
         const majorStars = palace.majorStars || [];
         if (majorStars.length) {
@@ -438,12 +420,29 @@ if (hourly) lines.push(`- 流时${hourly}落于此`);
         const dayFlowStars = dailyStars[idx] || [];
         const hourFlowStars = hourlyStars[idx] || [];
 
-        lines.push("流曜：");
-        lines.push(`  - 大限：${decFlowStars.map((s: any) => s.name).join("、") || "无"}`);
-        lines.push(`  - 流年：${yearFlowStars.map((s: any) => s.name).join("、") || "无"}`);
-        lines.push(`  - 流月：${monthFlowStars.map((s: any) => s.name).join("、") || "无"}`);
-        lines.push(`  - 流日：${dayFlowStars.map((s: any) => s.name).join("、") || "无"}`);
-        lines.push(`  - 流时：${hourFlowStars.map((s: any) => s.name).join("、") || "无"}`);
+        lines.push("流曜和落宫：");
+        const deca = ensureGong(decadalPalNames[idx]);
+if (deca) lines.push(`- 大限${deca}落于此`);
+lines.push(`  - 大限流曜：${decFlowStars.map((s: any) => s.name).join("、") || "无"}`);
+const age = ensureGong(agePalNames[idx]);
+if (age) lines.push(`- 小限${age}落于此`);
+
+const yearly = ensureGong(yearlyPalNames[idx]);
+if (yearly) lines.push(`- 流年${yearly}落于此`);
+lines.push(`  - 流年流曜：${yearFlowStars.map((s: any) => s.name).join("、") || "无"}`);
+const monthly = ensureGong(monthlyPalNames[idx]);
+if (monthly) lines.push(`- 流月${monthly}落于此`);
+lines.push(`  - 流月流曜：${monthFlowStars.map((s: any) => s.name).join("、") || "无"}`);
+const daily = ensureGong(dailyPalNames[idx]);
+if (daily) lines.push(`- 流日${daily}落于此`);
+lines.push(`  - 流日流曜：${dayFlowStars.map((s: any) => s.name).join("、") || "无"}`);
+const hourly = ensureGong(hourlyPalNames[idx]);
+if (hourly) lines.push(`- 流时${hourly}落于此`);
+lines.push(`  - 流时流曜：${hourFlowStars.map((s: any) => s.name).join("、") || "无"}`);
+        
+        
+        
+        
 
         lines.push(`十二长生：${palace.changsheng12 || ""}`);
         lines.push(`十二博士：${palace.boshi12 || ""}`);
