@@ -462,7 +462,7 @@ lines.push(`  - 流时流曜：${hourFlowStars.map((s: any) => s.name).join("、
     const markdownReport = parseHoroscopeFull(jsonString);
 
     e.stopPropagation();
-    navigator.clipboard.writeText(markdownReport+"以上为命盘。请参照此盘回答用户的问题，需要客观，无需考虑用户是否乐意听。用户提问：");
+    navigator.clipboard.writeText(markdownReport+"以上为紫微斗数的星盘。请根据此盘客观回答用户的问题，无需考虑用户是否乐意听。除非用户要求否则禁止自行推算后续盘面，严格基于当前盘面解答。用户提问：");
     alert("星盘解析（Markdown格式）已复制到剪贴板");
   }}
 >
