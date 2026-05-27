@@ -310,7 +310,7 @@ export const IzpalaceCenter = ({
       lines.push(`年龄(虚岁)：${get(h, "age.nominalAge", "")}`);
       lines.push(`阳历：${a.solarDate || ""} / ${h.solarDate || ""}(盘中当前)`);
       lines.push(`农历：${a.lunarDate || ""} / ${h.lunarDate || ""}(盘中当前)`);
-      lines.push(`时辰：${a.time || ""}(${a.timeRange || ""})`);
+      lines.push(`出生时辰：${a.time || ""}(${a.timeRange || ""})`);
       lines.push(`五行局：${a.fiveElementsClass || ""}`);
       lines.push(`四柱：${a.chineseDate || ""}`);
       lines.push(`生肖：${a.zodiac || ""}`);
